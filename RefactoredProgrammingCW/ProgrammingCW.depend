@@ -1,0 +1,113 @@
+# depslib dependency file v1.0
+1479548123 source:c:\users\james\desktop\cw\programmingcw\src\table.cpp
+	"Table.h"
+
+1479494137 c:\users\james\desktop\cw\programmingcw\include\table.h
+	<string>
+	<fstream>
+	<iostream>
+	<sstream>
+	<vector>
+	<cmath>
+
+1478716965 source:c:\users\james\desktop\cw\programmingcw\src\main.cpp
+	<iostream>
+	"Table.h"
+
+1479556046 source:c:\users\james\desktop\cw\programmingcw\src\classification.cpp
+	"Table.h"
+	"Classification.h"
+	<algorithm>
+	<vector>
+
+1479050827 source:c:\users\salad\desktop\cw\programmingcw\src\classification.cpp
+	"Table.h"
+	<algorithm>
+	<vector>
+
+1478983196 c:\users\salad\desktop\cw\programmingcw\include\table.h
+	<string>
+	<fstream>
+	<iostream>
+	<sstream>
+	<vector>
+	<cmath>
+
+1478891951 source:c:\users\salad\desktop\cw\programmingcw\src\table.cpp
+	"Table.h"
+
+1479554591 c:\users\james\desktop\cw\programmingcw\include\classification.h
+
+1479235571 source:c:\users\james\desktop\cw\cw\programmingcw\src\table.cpp
+	"Table.h"
+
+1479296042 c:\users\james\desktop\cw\cw\programmingcw\include\table.h
+	<string>
+	<fstream>
+	<iostream>
+	<sstream>
+	<vector>
+	<cmath>
+
+1479476736 source:c:\users\james\desktop\cw\cw\programmingcw\src\classification.cpp
+	"Table.h"
+	"Classification.h"
+	<algorithm>
+	<vector>
+
+1479303959 c:\users\james\desktop\cw\cw\programmingcw\include\classification.h
+
+1480352544 source:c:\users\james\desktop\cw\refactoredprogrammingcw\src\table.cpp
+	"Table.h"
+
+1480159139 c:\users\james\desktop\cw\refactoredprogrammingcw\include\table.h
+	<string>
+	<fstream>
+	<iostream>
+	<sstream>
+	<vector>
+	<cmath>
+	<stdexcept>
+
+1480427974 source:c:\users\james\desktop\cw\refactoredprogrammingcw\src\classification.cpp
+	"Table.h"
+	"Classification.h"
+
+1480353256 c:\users\james\desktop\cw\refactoredprogrammingcw\include\classification.h
+	<algorithm>
+	<vector>
+	<stdexcept>
+	<exception>
+
+1479548123 source:c:\users\salad\google drive\uni\7com1025 - programming for software engineers\practical\cw\refactoredprogrammingcw\src\table.cpp
+	"Table.h"
+
+1479494137 c:\users\salad\google drive\uni\7com1025 - programming for software engineers\practical\cw\refactoredprogrammingcw\include\table.h
+	<string>
+	<fstream>
+	<iostream>
+	<sstream>
+	<vector>
+	<cmath>
+
+1480155969 source:c:\users\salad\desktop\cw\refactoredprogrammingcw\src\table.cpp
+	"Table.h"
+
+1480159139 c:\users\salad\desktop\cw\refactoredprogrammingcw\include\table.h
+	<string>
+	<fstream>
+	<iostream>
+	<sstream>
+	<vector>
+	<cmath>
+	<stdexcept>
+
+1480193062 source:c:\users\salad\desktop\cw\refactoredprogrammingcw\src\classification.cpp
+	"Table.h"
+	"Classification.h"
+
+1480183918 c:\users\salad\desktop\cw\refactoredprogrammingcw\include\classification.h
+	<algorithm>
+	<vector>
+	<stdexcept>
+

@@ -1,0 +1,449 @@
+#include "Table.h"
+#include "Classification.h"
+
+
+#include <algorithm>
+#include <vector>
+
+
+    Classification::Classification(string dataName, string learningdataName, string learningdatalabelsName, unsigned int k1)
+    {
+        Table d(dataName);
+        Table ld(learningdataName);
+        Table ldl(learningdatalabelsName);
+        data = d;
+        learning_data = ld;
+        learning_data_labels = ldl;
+        if(k1 < 1 || k1 > learning_data.getRowSize())
+        {
+             throw "k not valid";
+        }
+        k = k1;
+    }
+
+    Classification::Classification(string dataName, string learningdataName, string learningdatalabelsName, string correctdatalabelsName, unsigned int k1)
+    {
+        Table d(dataName);
+        Table ld(learningdataName);
+        Table ldl(learningdatalabelsName);
+        Table cdl(correctdatalabelsName);
+        data = d;
+        learning_data = ld;
+        learning_data_labels = ldl;
+        correct_data_labels = cdl;
+        if(k1 < 1 || k1 > learning_data.getRowSize())
+        {
+             throw "k not valid";
+        }
+        k = k1;
+    }
+
+    Classification::Classification(unsigned int k1)
+    {
+        if(k1 < 1 || k1 > learning_data.getRowSize())
+        {
+             throw "k not valid";
+        }
+        k = k1;
+    }
+
+    void Classification::addCorrectDataLabels(Table &correctDL) { correct_data_labels = correctDL; }
+    void Classification::addDataTable(Table &dataTable) { data = dataTable; }
+    void Classification::addLearningData(Table &learningData) { learning_data = learningData; }
+    void Classification::addLearningDataLabels(Table &learningDataLabels) { learning_data_labels = learningDataLabels; }
+
+    void Classification::addTables(Table table1, Table table2, Table table3)
+    {
+        data = table1;
+        learning_data = table2;
+        learning_data_labels = table3;
+    }
+
+    Table Classification::getDataTable()
+    {
+        return data;
+    }
+
+    Table Classification::getLearningDataTable()
+    {
+        return learning_data;
+    }
+
+    Table Classification::getLearningDataLabelsTable()
+    {
+        return learning_data_labels;
+    }
+
+    Table Classification::getDataLabels()
+    {
+        return data_labels;
+    }
+
+    Table Classification::getCorrectDataLabels()
+    {
+        return correct_data_labels;
+    }
+
+    extern vector<vector <float> > Classification::getEuclideanDist(Table &tableA, Table &tableB)
+    {
+        distance.clear();
+
+
+        for (int pos = 0; pos < tableA.getRowSize(); pos++)
+        {
+        vector<float> row2;
+        for(int row = 0; row < tableB.getRowSize() && row < tableB.getRowSize(); row++)
+        {
+            float total = 0.0f;
+            for(int col = 0; col < tableB.getColumnSize(); col++)
+            {
+                float valA = tableA.getValue(pos, col);
+                float valB = tableB.getValue(row, col);
+                float val2 = valA - valB;
+                float val3 = pow(val2, 2);
+                total += val3;
+            }
+            float total2 = sqrt(total);
+            row2.push_back(total2);
+        }
+        distance.push_back(row2);
+        }
+
+        return distance;
+    }
+
+
+    void Classification::getMinValue(vector<vector<float> > &vec, int tabArow)
+    {
+        vector <float> row3;
+        float maxValue = ((*max_element(vec[tabArow].begin(), vec[tabArow].end())) + 1);
+        for(unsigned int i = 0; i < k; i++)
+        {
+            float minValue = *min_element(vec[tabArow].begin(), vec[tabArow].end());
+
+            for(unsigned int x = 0; x < vec[tabArow].size(); x++)
+            {
+                if(vec[tabArow][x] == minValue)
+                {
+                    float tmp = 0.0f;
+                    tmp = learning_data_labels.getValue(x, 0);
+                    vec[tabArow][x] = 999;
+                    row3.push_back(tmp);
+                    cout << " " << minValue << " (" << x << ") DLV:" << tmp << ", ";
+                }
+            }
+
+        }
+
+        minPositions.push_back(row3);
+
+//        for (int i = 0; i < minPositions.size(); i++)
+//        {
+//            for (int j = 0; j < minPositions[i].size(); j++)
+//            {
+//            cout << "minPositions " << minPositions[i][j] << "  ";
+//            }
+//            cout << "\n";
+//        }
+
+        }
+
+        void Classification::setMode(vector<vector <float> > &vec)
+        {
+            for(unsigned int i = 0; i < vec.size(); i++)
+            {
+            vector <float> vtmp;
+            int highestFreq = 0;
+            float modeNumber = 0;
+
+
+            vector<float> vecTmp = vec[i];
+            for(vector <float>::iterator it = vecTmp.begin(); it!=vecTmp.end(); it++)
+            {
+
+                float point = *it;
+
+                int counting = count(vec[i].begin(), vec[i].end(), point);
+
+
+
+                if (counting > highestFreq)
+                {
+                    modeNumber = point;
+                    highestFreq = counting;
+                }
+            }
+            //cout << "\n [ " << i << "] mode number: " << modeNumber << "\n";
+
+            vtmp.push_back(modeNumber);
+            modeVector.push_back(vtmp);
+            }
+
+//        for (int i = 0; i < modeVector.size(); i++)
+//        {
+//            for (int j = 0; j < modeVector[i].size(); j++)
+//            {
+//            cout << "mode " << modeVector[i][j] << "  ";
+//            }
+//            cout << "\n";
+//        }
+//            }
+            createDataLabelsClass(modeVector);
+            for (int x = 0; x < modeVector.size(); x++)
+            {
+                cout << "\n [ " << x << "] mode number: " << modeVector[x][0] << "\n";
+            }
+        }
+
+        unsigned int Classification::getK()
+        {
+            return k;
+        }
+
+        void Classification::setK(unsigned int l)
+        {
+            if(l < 1 || l > learning_data.getRowSize())
+            {
+                throw "k not valid";
+            }
+            k = l;
+        }
+
+
+
+    float Classification::getAccuracy(Table &tableA, Table &tableB)
+    {
+        float accuracy = 0.0f;
+        for(int i = 0; i < tableA.getRowSize(); i++)
+        {
+            float posTmp = tableA.getValue(i, 0);
+            float corTmp = tableB.getValue(i, 0);
+            cout << "[" << i << "] Correct_Data_labels: " << corTmp << " Data_labels: " << posTmp << "[" << i << "]\n";
+
+            if(posTmp == corTmp)
+            {
+                accuracy++;
+            }
+            posTmp = 0.0f;
+            corTmp = 0.0f;
+        }
+        return ((accuracy) / (tableA.getRowSize()) * 100);
+    }
+
+    float Classification::getAccuracy()
+    {
+        return getAccuracy(data_labels, correct_data_labels);
+    }
+
+    void Classification::getModeVector()
+    {
+        for(unsigned int i = 0; i < modeVector.size(); i++)
+        {
+            cout << "\n position vector: " << modeVector[i][0];
+        }
+    }
+
+
+
+    void Classification::getMinPositions()
+    {
+
+        for(unsigned int i = 0; i < minPositions.size(); i++)
+        {
+            for(unsigned int ii = 0; ii < minPositions[1].size(); ii++)
+            {
+
+                int f = minPositions[i][ii];
+                cout << f << "  ";
+            }
+        }
+
+    }
+
+    void Classification::createDataLabelsClass(vector<vector <float> > &vec)
+    {
+        Table tab;
+        tab.addDataTable(vec);
+        data_labels = tab;
+    }
+
+    void Classification::getManhattanDist(Table &tableA, Table &tableB)
+    {
+        distance.clear();
+        for(int i = 0; i < tableA.getRowSize(); i++)
+        {
+
+        for (int pos = 0; pos < tableA.getRowSize(); pos++)
+        {
+        vector<float> row2;
+        for(int row = 0; row < tableB.getRowSize() && row < tableB.getRowSize(); row++)
+        {
+            float total = 0.0f;
+            for(int col = 0; col < tableB.getColumnSize(); col++)
+            {
+                float valA = tableA.getValue(pos, col);
+                float valB = tableB.getValue(row, col);
+                float val2 = valA - valB;
+                float val3 = fabs(val2);
+                total += val3;
+            }
+            float total2 = sqrt(total);
+            row2.push_back(total2);
+        }
+        distance.push_back(row2);
+        }
+
+        cout << "min value for ROW [" << i << "] ";
+        getMinValue(distance, i);
+        cout << "\n";
+        }
+
+        setMode(minPositions);
+    }
+
+    void Classification::getEuclideanDist()
+    {
+        getEuclideanDist(data, learning_data);
+    }
+
+    void Classification::getManhattanDist()
+    {
+        getManhattanDist(data, learning_data);
+    }
+
+    void Classification::standardiseAllData()
+    {
+        data.stdData();
+        learning_data.stdData();
+        learning_data_labels.stdData();
+    }
+
+
+    void Classification::operation(Table first, Table second, vector<vector <float> > (*functocall)(Table, Table))
+    {
+        distance.clear();
+        Table tableA = first;
+        Table tableB = second;
+        distance = (*functocall)(tableA, tableB);
+
+
+        for(int i = 0; i < tableA.getRowSize(); i++)
+        {
+
+        cout << "min value for ROW [" << i << "] ";
+        getMinValue(distance, i);
+        cout << "\n";
+        }
+
+        setMode(minPositions);
+
+
+    }
+
+
+
+
+
+
+int main()
+{
+//cout << "creating objects \n";
+//Table tb1;
+
+//cout << "populating table \n";
+//tb1.populateTable("data.csv");
+//cout << tb1;
+Classification classif("data.csv", "learning_data.csv", "learning_data_labels.csv", "correct_data_labels.csv", 5);
+//Table correct_data_labels("correct_data_labels.csv");
+cout << "data labels" << classif.getDataLabels() << "\n";
+//classif.learning_data_labels.getValue(39,0);
+//classif.standardiseAllData();
+vector <vector <float> > (*getDist)(Table, Table);
+getDist = classif.getEuclideanDist;
+cout << "accuracy: " << classif.getAccuracy() << "   with k as: " << classif.getK() << "\n";
+//classif.getManhattanDist();
+//cout << "accuracy: " << classif.getAccuracy() << "   with k as: " << classif.getK() << "\n";
+Table correctdatalabels = classif.getCorrectDataLabels();
+Table datalabels = classif.getDataLabels();
+Table learning_datalabels = classif.getLearningDataLabelsTable();
+
+//cout << "\n";
+//cout << "LDL all values: " << learning_datalabels.getAllValues();
+//cout << "\n";
+
+cout << "pos 39: " << learning_datalabels.getValue(39,0);
+
+
+//classif.getManhattanDist();
+//classif.addCorrectDataLabels(correct_data_labels);
+cout << "learning data labels get: " << learning_datalabels.getValue(38,0);
+cout << "\n \n";
+//cout << "data labels size: " << classif.data_labels.getRowSize();
+
+cout << "pos 38: " << learning_datalabels.getValue(38,0) << "\n";
+cout << "pos 39: " << learning_datalabels.getValue(39,0) << "\n";
+cout << "pos 40: " << learning_datalabels.getValue(40,0) << "\n";
+cout << "pos 41: " << learning_datalabels.getValue(41,0) << "\n";
+
+//cout << "size: " << classif.correct_data_labels.getRowSize();
+//classif.getPositions();
+//classif.getPositions();
+//cout << classif.position2[2][2];
+//cout << "\npercentage: " << classif.getAccuracy();
+//cout << classif.getDataTable();
+//Table table("data.csv");
+//cout << table;
+//cout << "\n \n";
+//cout << "average: " << table.getColumnAverage(0);
+//cout << "\n \n";
+//table.stdData();
+//cout << table;
+//cout <<  "stand dev 1: "<< table.getStandardDev(0);
+//tb1.populateTable();
+//cout << tb1.getAllValues();
+//cout << "geting value " << tb1.getValue(2, 5) << "\n";
+//tb1.setCellValue(2,5,3.14);
+//cout << "getting new Value " << tb1.getValue(2, 5) << "\n";
+//cout << "Row Size: " << tb1.getRowSize() << "\n";
+//cout << "Column Size: " << tb1.getColumnSize() << "\n";
+//cout << "info: " << tb1.getInfo();
+//cout << "\n";
+//cout << "get row average: " << tb1.getRowAverage(5) << "\n";
+//cout << "get row average: " << tb1.getRowAverage(8) << "\n";
+//cout << "get column average: " << tb1.getColumnAverage(3) << "\n";
+//cout << "get standard dev: " << tb1.getStandardDev(2) << "\n";
+//cout << tb1;
+//cout << "before remove row: " << tb1.getRowSize() << "\n";
+//tb1.removeRow(4);
+//cout << "after remove row: " << tb1.getRowSize() << "\n";
+
+//cout << "before remove col 0 : " << tb1.getColumnSize() << "\n";
+//tb1.removeColumn(0);
+
+//cout << "before remove col 1 : " << tb1.getColumnSize() << "\n";
+//tb1.removeColumn(1);
+//tb1.removeColumn(0);
+//tb1.removeColumn(0);
+//tb1.removeColumn(0);
+//tb1.removeColumn(0);
+//tb1.removeColumn(0);
+//cout << "after remove col 1 : " << tb1.getColumnSize() << "\n";
+//cout << tb1;
+//cout << "after remove col 1 : " << tb1.getColumnSize() << "\n";
+
+//cout << "info: " << tb1.getInfo() << "\n";
+//cout << tb1;
+//cout << "\n \n";
+//tb1.stdData();
+//cout << tb1;
+
+//float test = tb1.stringToFloat("3.141");
+//float test2 = tb1.stringToFloat("1.141");
+
+//cout << "testing string to float: " << test + test2 << "\n";
+//tb1.getValues();
+//tb1.populateTable();
+
+}
+
+
